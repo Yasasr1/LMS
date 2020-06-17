@@ -2,11 +2,7 @@
 const initialState = {
     uid: null,
     userType: null,
-    teacher: {
-        selectedGrade: '0',
-        selectedSubject: '0',
-        selectedTopic: '0'
-    },
+  
     
 };
 
@@ -45,23 +41,7 @@ const reducer = (state = initialState, action) => {
                 uid: null,
                 userType: null
             }
-        case 'SET_GRADE_SUBJECT':
-            return {
-                ...state,
-                teacher: {
-                    ...state.teacher,
-                    selectedGrade: action.value.grade,
-                    selectedSubject: action.value.subject
-                }
-            }
-        case 'SET_TOPIC':
-            return {
-                ...state,
-                teacher: {
-                    ...state.teacher,
-                    selectedTopic: action.value.topic
-                }
-            }
+        
 
         default:
             return state

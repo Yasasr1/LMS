@@ -4,7 +4,7 @@ import fire from '../components/firebase';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 import "./LoginPage.css";
-import logo from "../../src/assets/images/scl.jpeg"
+import lgo from "../../src/assets/images/lgo.jpg"
 
 
 
@@ -44,13 +44,21 @@ class LoginPage extends Component {
             var user = fire.auth().currentUser;
             var id = user.uid
 
-            const userRef = fire.database().ref('/users/' + id).once('value').then((snapshot) => {
-                this.setState({
-                    userType: snapshot.val().user_type
-                });
-                this.props.onAuth(id, this.state.userType);
-                this.setState({redirect: <Redirect to="/dashboard"/>})
+            fire.firestore().doc(`users/${id}`).get().then( res =>{
+              this.setState({
+                userType: res.data().user_type
+              });
+              this.props.onAuth(id, this.state.userType);
+              this.setState({redirect: <Redirect to="/dashboard"/>})
             })
+
+            // const userRef = fire.database().ref('/users/' + id).once('value').then((snapshot) => {
+            //     this.setState({
+            //         userType: snapshot.val().user_type
+            //     });
+            //     this.props.onAuth(id, this.state.userType);
+            //     this.setState({redirect: <Redirect to="/dashboard"/>})
+            // })
         })
         .catch(err => {
             console.log(err);
@@ -95,7 +103,7 @@ class LoginPage extends Component {
     <div className="user_card">
       <div className="d-flex justify-content-center">
         <div className="brand_logo_container">
-          <img src={logo} className="brand_logo" alt="Logo" />
+          <img src={lgo} className="brand_logo" alt="Logo" />
         </div>
       </div>
       <div className="d-flex justify-content-center form_container">
@@ -107,7 +115,7 @@ class LoginPage extends Component {
             <input type="email"
                     id="email"
                     label="Email"
-                    onChange={this.setEmail} className="form-control input_user" placeholder="student@gmail.com" />
+                    onChange={this.setEmail} className="form-control input_user" placeholder="center@gmail.com" />
           </div>
           <div className="input-group mb-2">
             <div className="input-group-append">

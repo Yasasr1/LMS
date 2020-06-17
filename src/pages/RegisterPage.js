@@ -2,11 +2,12 @@ import React , { Component } from 'react';
 import { Button, FormControl, Select, MenuItem, InputLabel} from '@material-ui/core';
 //import background from '../assets/images/login_background.jpg';
 import fire from '../components/firebase';
+import firestore from "../components/firebase";
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import "./LoginPage.css";
-import logo from "../../src/assets/images/scl.jpeg"
+import lgo from "../../src/assets/images/lgo.jpg"
 
 
 
@@ -15,8 +16,8 @@ class LoginPage extends Component {
         email: '',
         password: '',
         full_name: '',
-        grade: '',
-        user_type: 'student',
+        // grade: '',
+        user_type: '',
         redirect: null
     }
 
@@ -32,16 +33,16 @@ class LoginPage extends Component {
         this.setState({full_name: event.target.value});
     }
 
-    setGrade = (event) => {
+    setUtype = (event) => {
         this.setState({
-            grade: event.target.value
+            user_type: event.target.value
         }
         );
     }
 
     registrationHandler = () => {
         fire.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((res) => {
+        .then(async (res) => {
             var user = fire.auth().currentUser;
             var id = user.uid
             this.props.onAuth(id, this.state.user_type);
@@ -55,18 +56,27 @@ class LoginPage extends Component {
                 console.log(err);
             }));
 
-            fire.database().ref('/users/' +id).set({
+            await fire.firestore().doc(`users/${id}`).set({
                 user_type: this.state.user_type,
                 full_name: this.state.full_name,
-                grade: this.state.grade
-
+                // grade: this.state.grade
             }).then(res => {
                 console.log(res);
                 this.setState({redirect: <Redirect to="/dashboard"/>})
             })
-            .catch(err => {
-                console.log(err);
-            })
+
+            // fire.database().ref('/users/' +id).set({
+            //     user_type: this.state.user_type,
+            //     full_name: this.state.full_name,
+            //     grade: this.state.grade
+
+            // }).then(res => {
+            //     console.log(res);
+            //     this.setState({redirect: <Redirect to="/dashboard"/>})
+            // })
+            // .catch(err => {
+            //     console.log(err);
+            // })
         })
         .catch((err) => {
             console.log(err.message);
@@ -102,7 +112,7 @@ class LoginPage extends Component {
     <div className="user_card">
       <div className="d-flex justify-content-center">
         <div className="brand_logo_container">
-          <img src={logo} className="brand_logo" alt="Logo" />
+          <img src={lgo} className="brand_logo" alt="Logo" />
         </div>
       </div>
       <div className="d-flex justify-content-center form_container">
@@ -124,7 +134,7 @@ class LoginPage extends Component {
             <input type="email"
                     id="email"
                     label="Email"
-                    onChange={this.setEmail} className="form-control input_user" placeholder="student@gmail.com" />
+                    onChange={this.setEmail} className="form-control input_user" placeholder="garage@gmail.com" />
           </div>
           <div className="input-group mb-2">
             <div className="input-group-append">
@@ -138,24 +148,15 @@ class LoginPage extends Component {
           <div className="form-group">
 
             <FormControl  className="input-group-text" component="fieldset" style={{width: '100%'}} >
-            <InputLabel style={{ disableAnimation: false }} disableAnimation={false}  className="text-white">SELECT YOUR GRADE *  </InputLabel>
+            <InputLabel style={{ disableAnimation: false }} disableAnimation={false}  className="text-white">Service or Garage?  </InputLabel>
                             <Select
                             labelId="Grade"
-                            id="grade"
+                            id="user_type"
                             value={this.state.grade}
-                            onChange={this.setGrade}
+                            onChange={this.setUtype}
                             >
-                                <MenuItem value={1}>1</MenuItem>
-                                <MenuItem value={2}>2</MenuItem>
-                                <MenuItem value={3}>3</MenuItem>
-                                <MenuItem value={4}>4</MenuItem>
-                                <MenuItem value={5}>5</MenuItem>
-                                <MenuItem value={6}>6</MenuItem>
-                                <MenuItem value={7}>7</MenuItem>
-                                <MenuItem value={8}>8</MenuItem>
-                                <MenuItem value={9}>9</MenuItem>
-                                <MenuItem value={10}>10</MenuItem>
-                                <MenuItem value={11}>11</MenuItem>
+                                <MenuItem value={"service"}>Service</MenuItem>
+                                <MenuItem value={"garage"}>Garage</MenuItem>
                             </Select>
                         </FormControl>
                 </div>

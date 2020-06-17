@@ -33,7 +33,7 @@ class Header extends Component {
             console.log(err);
         })
         this.props.onLogout();
-        this.props.history.replace('/');
+        // this.props.history.replace('/');
     
     }
 
